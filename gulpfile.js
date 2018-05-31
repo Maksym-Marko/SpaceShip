@@ -20,13 +20,18 @@ gulp.task( 'compress', () => {
 
 // compile
 gulp.task('goBabel', () =>
-    gulp.src('app/js/**/*.js')
+    gulp.src( [
+    		'app/js/inc/Management.js',
+    		'app/js/inc/DrawElementInCanvas.js',
+    		'app/js/inc/FinallClass.js',
+    		'app/js/index.js'
+    	] )
     	.pipe( plumber() )
         // .pipe(sourcemaps.init())
         .pipe(babel({
             presets: ['es2015']
         }))
-        // .pipe(concat('all.js'))
+        .pipe(concat('script.js'))
         // .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('app/es5/'))
 );

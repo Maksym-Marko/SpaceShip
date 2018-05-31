@@ -4,7 +4,6 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-// -1
 var Management = function () {
 		function Management(idElement, idWrap) {
 				_classCallCheck(this, Management);
@@ -32,6 +31,9 @@ var Management = function () {
 
 				// center rect Wrap y
 				this.centerRectWrapY = this.wheelWrapGBCR.height / 2;
+
+				// confircation first drag
+				this.keyFirstDrag = true;
 
 				// key movement x
 				this.keyMoveX = false;
@@ -136,6 +138,15 @@ var Management = function () {
 				key: 'backWheel',
 				value: function backWheel() {
 
+						if (this.keyFirstDrag === true) {
+
+								this.posLeft = this.centerRectWrapX;
+
+								this.posTop = this.centerRectWrapY;
+
+								this.keyFirstDrag = false;
+						}
+
 						// x
 						if (this.keyMoveX === true) {
 
@@ -166,23 +177,13 @@ var Management = function () {
 										this.posTop -= this.backSpeed;
 								} else {
 
-										this.posposTop = this.centerRectWrapY;
+										this.posTop = this.centerRectWrapY;
 
 										this.keyMoveY = false;
 								}
 
 								this.movementWhell(this.posLeft, this.posTop);
 						}
-
-						//---------- back ----------------
-
-
-						// _this.movementWhell( _this.posLeft, _this.posTop )
-
-						// console.log( _this.centerRectWrapX + ' - ' + _this.posLeft );
-						console.log(this.posLeft);
-
-						// 
 				}
 		}, {
 				key: 'speedCanvasMovement',
@@ -211,3 +212,78 @@ var Management = function () {
 
 		return Management;
 }();
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var DrawElementInCanvas = function () {
+		function DrawElementInCanvas(ctx, pos1, pos2) {
+				_classCallCheck(this, DrawElementInCanvas);
+
+				this.ctx = ctx;
+
+				this.pos1 = pos1;
+
+				this.pos2 = pos2;
+
+				this.init();
+		}
+
+		_createClass(DrawElementInCanvas, [{
+				key: 'createElement',
+				value: function createElement() {
+
+						this.ctx.beginPath();
+
+						this.ctx.arc(this.pos1, this.pos2, 50, 0, 2 * Math.PI);
+
+						this.ctx.fillStyle = 'green';
+
+						this.ctx.fill();
+				}
+		}, {
+				key: 'init',
+				value: function init() {
+
+						this.createElement();
+				}
+		}]);
+
+		return DrawElementInCanvas;
+}();
+'use strict';
+
+// loop 
+var reqAnimationFrame = function () {
+
+	return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback) {
+
+		setTimeout(callback, 1000 / 60);
+	};
+
+	// return function( callback ){ setTimeout( callback, 1000 ); };
+}();
+
+var newInstance = new FinallClass('SpaceFly', 'mxScreen');
+
+// init management
+var newInstanceManegement = new Management('wheel', 'wheelWrap');
+
+function run() {
+
+	// draw canvas and elems
+	newInstance.draw();
+
+	// return speed movement canvas
+	var speed = newInstanceManegement.speedCanvasMovement();
+	//console.log( speed );
+
+	// basic position the canvas
+	newInstance.positionCanvas(speed.speedLeft, speed.speedTop);
+
+	reqAnimationFrame(run);
+}
+
+run();

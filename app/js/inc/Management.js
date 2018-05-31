@@ -1,4 +1,3 @@
-// -1
 class Management{
 
 	constructor( idElement, idWrap ){
@@ -26,6 +25,9 @@ class Management{
 
 		// center rect Wrap y
 		this.centerRectWrapY = this.wheelWrapGBCR.height / 2;
+
+		// confircation first drag
+		this.keyFirstDrag = true;
 
 		// key movement x
 		this.keyMoveX = false;
@@ -134,6 +136,16 @@ class Management{
 	// back position
 	backWheel(){
 
+		if( this.keyFirstDrag === true ){
+
+			this.posLeft = this.centerRectWrapX;
+
+			this.posTop = this.centerRectWrapY;
+
+			this.keyFirstDrag = false;
+
+		}
+
 		// x
 		if( this.keyMoveX === true ){
 
@@ -170,7 +182,7 @@ class Management{
 
 			} else{
 
-				this.posposTop = this.centerRectWrapY;
+				this.posTop = this.centerRectWrapY;
 
 				this.keyMoveY = false; 
 
@@ -179,16 +191,6 @@ class Management{
 			this.movementWhell( this.posLeft, this.posTop );
 
 		}
-
-		//---------- back ----------------
-		
-
-		// _this.movementWhell( _this.posLeft, _this.posTop )
-
-		// console.log( _this.centerRectWrapX + ' - ' + _this.posLeft );
-		console.log( this.posLeft );
-
-			// 
 
 	}
 

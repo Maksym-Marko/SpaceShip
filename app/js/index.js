@@ -1,4 +1,4 @@
-// loop
+// loop 
 let reqAnimationFrame = ( function(){
 
 	return window.requestAnimationFrame
@@ -12,11 +12,11 @@ let reqAnimationFrame = ( function(){
 
         };
 
-	//return function( callback ){ setTimeout( callback, 1000 ); };
+	// return function( callback ){ setTimeout( callback, 1000 ); };
 
 } )();
 
-let newInstance = new FinallClass( 'SpaceFly' );
+let newInstance = new FinallClass( 'SpaceFly', 'mxScreen' );
 
 // init management
 let newInstanceManegement = new Management( 'wheel', 'wheelWrap' );
@@ -28,7 +28,10 @@ function run(){
 
 	// return speed movement canvas
 	let speed = newInstanceManegement.speedCanvasMovement();
-	console.log( speed );
+	//console.log( speed );
+
+	// basic position the canvas
+	newInstance.positionCanvas( speed.speedLeft, speed.speedTop );
 
 	reqAnimationFrame( run );
 

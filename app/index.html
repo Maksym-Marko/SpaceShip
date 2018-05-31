@@ -10,6 +10,7 @@
 				border: 1px solid #333;
 				position: relative;
 				margin: 0px auto;
+				overflow: hidden;
 			}
 			.mx-screen canvas{
 				position: absolute;
@@ -20,7 +21,7 @@
 				position: relative;
 				width: 150px;
 				height: 150px;
-				border: 1px solid #333;
+				background-color: #ddd;
 				float: right;
 			}
 			#wheel{
@@ -38,7 +39,7 @@
 	</head>
 	<body>
 		
-		<div class="mx-screen">
+		<div class="mx-screen" id="mxScreen">
 			<canvas id="SpaceFly"></canvas>
 		</div>
 
@@ -46,11 +47,7 @@
 			<div id="wheel"></div>
 		</div>
 
-		<script src="./es5/inc/Management.js"></script>
-		<script src="./es5/inc/DrawElementInCanvas.js"></script>
-		
-		<script src="./es5/inc/FinallClass.js"></script>
-		<script src="./es5/index.js"></script>
+		<script src="./es5/script.js"></script>
 
 	</body>
 </html>
