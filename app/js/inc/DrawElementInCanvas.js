@@ -1,4 +1,4 @@
-class DrawElementInCanvas{
+class DrawSpaceElements{
 
 	constructor(  ctx, pos1, pos2 ){
 
@@ -12,11 +12,11 @@ class DrawElementInCanvas{
 
 	}
 
-	createElement(){
+	createStar(){
 
 		this.ctx.beginPath();
-
-		this.ctx.arc( this.pos1, this.pos2, 50, 0, 2*Math.PI );
+		
+		this.ctx.arc( this.pos1, this.pos2, 10, 0, 2*Math.PI );
 
 		this.ctx.fillStyle = 'green';
 
@@ -26,7 +26,7 @@ class DrawElementInCanvas{
 
 	init(){
 
-		this.createElement();
+		this.createStar();
 
 	}
 

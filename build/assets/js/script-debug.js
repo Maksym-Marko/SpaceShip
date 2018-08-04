@@ -218,9 +218,9 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var DrawElementInCanvas = function () {
-		function DrawElementInCanvas(ctx, pos1, pos2) {
-				_classCallCheck(this, DrawElementInCanvas);
+var DrawSpaceElements = function () {
+		function DrawSpaceElements(ctx, pos1, pos2) {
+				_classCallCheck(this, DrawSpaceElements);
 
 				this.ctx = ctx;
 
@@ -231,13 +231,13 @@ var DrawElementInCanvas = function () {
 				this.init();
 		}
 
-		_createClass(DrawElementInCanvas, [{
-				key: 'createElement',
-				value: function createElement() {
+		_createClass(DrawSpaceElements, [{
+				key: 'createStar',
+				value: function createStar() {
 
 						this.ctx.beginPath();
 
-						this.ctx.arc(this.pos1, this.pos2, 50, 0, 2 * Math.PI);
+						this.ctx.arc(this.pos1, this.pos2, 10, 0, 2 * Math.PI);
 
 						this.ctx.fillStyle = 'green';
 
@@ -247,11 +247,154 @@ var DrawElementInCanvas = function () {
 				key: 'init',
 				value: function init() {
 
-						this.createElement();
+						this.createStar();
 				}
 		}]);
 
-		return DrawElementInCanvas;
+		return DrawSpaceElements;
+}();
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var FinallClass = function () {
+
+		/********************************
+  * constructor
+  */
+		function FinallClass(idCanvas, wheel, wheelWrap) {
+				_classCallCheck(this, FinallClass);
+
+				// get canvas obj
+				this.canvas = document.getElementById(idCanvas);
+
+				// set context
+				this.ctx = this.canvas.getContext('2d');
+
+				// wheel
+				this.wheel = wheel;
+
+				// wheel wrap
+				this.wheelWrap = wheelWrap;
+
+				// set size canvas
+				this.setSizeCanvas(500, 350);
+
+				this.declareVariables();
+		}
+
+		/********************************
+  * declare a variables
+  * save a data
+  */
+
+
+		_createClass(FinallClass, [{
+				key: 'declareVariables',
+				value: function declareVariables() {
+
+						// todo
+						this.posElLeft = 1;
+
+						this.posElTop = 1;
+
+						// 
+						this.increment = 0;
+
+						//
+						this.numberStar = 0;
+				}
+
+				/********************************
+    * management
+    */
+
+		}, {
+				key: 'managementWheel',
+				value: function managementWheel() {
+
+						return new Management(this.wheel, this.wheelWrap);
+				}
+
+				/********************************
+    * create stars
+    */
+
+				/********************************
+    * create ship
+    */
+
+				/********************************
+    * movement space (canvas)
+    */
+
+				// set size canvas
+
+		}, {
+				key: 'setSizeCanvas',
+				value: function setSizeCanvas(_width, _height) {
+
+						this.canvas.width = _width;
+
+						this.canvas.height = _height;
+
+						this.canvas.style.border = '1px solid #333';
+				}
+
+				// draw elems
+
+		}, {
+				key: 'drawElement',
+				value: function drawElement(intensitLeft, intensitTop) {
+
+						var objStars = {};
+
+						// get coordinates
+						var coords = this.getRandomStr(0.1, 1, 100);
+
+						if (coords !== null) {
+
+								console.log(coords);
+								//objStars.star+[this.numberStar] = new DrawSpaceElements( this.ctx, coords.leftSpace, coords.topSpace );
+						}
+
+						return objStars;
+				}
+		}, {
+				key: 'drawElems',
+				value: function drawElems(intensitLeft, intensitTop) {
+
+						// clear the context
+						this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+						this.drawElement(intensitLeft, intensitTop);
+				}
+		}, {
+				key: 'getRandomStr',
+				value: function getRandomStr(speed, min, max) {
+
+						this.increment = this.increment + speed;
+
+						if (this.increment >= 10) {
+
+								var leftSpace = Math.floor(Math.random() * (max - min + 1)) + min;
+								var topSpace = Math.floor(Math.random() * (max - min + 1)) + min;
+
+								this.increment = 0;
+
+								return {
+										leftSpace: leftSpace,
+										topSpace: topSpace
+								};
+						}
+
+						return null;
+				}
+		}]);
+
+		return FinallClass;
 }();
 'use strict';
 
@@ -266,22 +409,27 @@ var reqAnimationFrame = function () {
 	// return function( callback ){ setTimeout( callback, 1000 ); };
 }();
 
-var newInstance = new FinallClass('SpaceFly', 'mxScreen');
+/*
+* final class
+* variables:
+* 1 - canvas element
+* 2 - wheel
+* 3 - wheel wrap
+*/
+var newInstance = new FinallClass('SpaceShip', 'wheel', 'wheelWrap');
 
 // init management
-var newInstanceManegement = new Management('wheel', 'wheelWrap');
+var instanceManegement = newInstance.managementWheel();
 
+// runs function
 function run() {
 
-	// draw canvas and elems
-	newInstance.draw();
-
 	// return speed movement canvas
-	var speed = newInstanceManegement.speedCanvasMovement();
-	//console.log( speed );
+	var speed = instanceManegement.speedCanvasMovement();
+	console.log(speed);
 
 	// basic position the canvas
-	newInstance.positionCanvas(speed.speedLeft, speed.speedTop);
+	newInstance.drawElems(speed.speedLeft, speed.speedTop);
 
 	reqAnimationFrame(run);
 }

@@ -16,22 +16,27 @@ let reqAnimationFrame = ( function(){
 
 } )();
 
-let newInstance = new FinallClass( 'SpaceFly', 'mxScreen' );
+/*
+* final class
+* variables:
+* 1 - canvas element
+* 2 - wheel
+* 3 - wheel wrap
+*/ 
+let newInstance 		= new FinallClass( 'SpaceShip', 'wheel', 'wheelWrap' );
 
 // init management
-let newInstanceManegement = new Management( 'wheel', 'wheelWrap' );
+let instanceManegement 	= newInstance.managementWheel();
 
+// runs function
 function run(){
 
-	// draw canvas and elems
-	newInstance.draw();
-
 	// return speed movement canvas
-	let speed = newInstanceManegement.speedCanvasMovement();
-	//console.log( speed );
+	let speed 			= instanceManegement.speedCanvasMovement();
+	// console.log( speed );
 
 	// basic position the canvas
-	newInstance.positionCanvas( speed.speedLeft, speed.speedTop );
+	newInstance.drawElems( speed.speedLeft, speed.speedTop );
 
 	reqAnimationFrame( run );
 
