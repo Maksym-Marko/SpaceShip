@@ -1,3 +1,18 @@
+"use strict";
+
+// This feature helps to pass each property of an object
+function eachObjProps(obj, callback) {
+	var length,
+	    i = 0;
+
+	for (i in obj) {
+		if (callback.call(obj[i], i, obj[i]) === false) {
+			break;
+		}
+	}
+
+	return obj;
+}
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -264,14 +279,11 @@ var FinallClass = function () {
 		/********************************
   * constructor
   */
-		function FinallClass(idCanvas, wheel, wheelWrap) {
+		function FinallClass(idCanvas, wheel, wheelWrap, widthCanvas, heightCanvas) {
 				_classCallCheck(this, FinallClass);
 
-				// get canvas obj
-				this.canvas = document.getElementById(idCanvas);
-
-				// set context
-				this.ctx = this.canvas.getContext('2d');
+				// canvas element
+				this.idCanvas = idCanvas;
 
 				// wheel
 				this.wheel = wheel;
@@ -279,10 +291,18 @@ var FinallClass = function () {
 				// wheel wrap
 				this.wheelWrap = wheelWrap;
 
-				// set size canvas
-				this.setSizeCanvas(500, 350);
+				// canvas size
+				this.widthCanvas = widthCanvas;
+				this.heightCanvas = heightCanvas;
 
+				// declare variables
 				this.declareVariables();
+
+				/*
+    * runs functions
+    */
+				// set size canvas
+				this.setSizeCanvas(this.widthCanvas, this.heightCanvas);
 		}
 
 		/********************************
@@ -295,16 +315,31 @@ var FinallClass = function () {
 				key: 'declareVariables',
 				value: function declareVariables() {
 
-						// todo
-						this.posElLeft = 1;
+						// get canvas obj
+						this.canvas = document.getElementById(this.idCanvas);
 
-						this.posElTop = 1;
+						// set context
+						this.ctx = this.canvas.getContext('2d');
 
-						// 
+						// use to the function getRandomStr()
 						this.increment = 0;
+						this.minLeft = 0;
+						this.minTop = 0;
+						this.maxLeft = this.widthCanvas;
+						this.maxTop = this.heightCanvas;
 
-						//
-						this.numberStar = 0;
+						// star store
+						this.objStars = {};
+
+						// first star
+						this.firstStar = 0;
+
+						// number of stars
+						this.countStars = 10;
+
+						// position of canvas
+						this.posCanvasLeft = 0;
+						this.posCanvasTop = 0;
 				}
 
 				/********************************
@@ -321,13 +356,74 @@ var FinallClass = function () {
 				/********************************
     * create stars
     */
+				// record a point in an object
+
+		}, {
+				key: 'setObjStars',
+				value: function setObjStars(posLeft, posTop) {
+
+						// get star coordinates
+						var coords = this.getRandomStr(0.1, posLeft, posTop);
+
+						if (coords !== null) {
+
+								// add star			
+								var star = 'star' + this.firstStar;
+
+								this.objStars[star] = {
+										leftSpace: coords.leftSpace,
+										topSpace: coords.topSpace
+								};
+
+								this.firstStar += 1;
+
+								// delete star
+								var objStarsLength = Object.keys(this.objStars).length;
+
+								var numberOfDelStar = 'star' + (this.firstStar - this.countStars);
+
+								if (objStarsLength >= this.countStars) {
+
+										delete this.objStars[numberOfDelStar];
+								}
+						}
+				}
+
+				// function to create a star with a random position
+
+		}, {
+				key: 'getRandomStr',
+				value: function getRandomStr(speed, posLeft, posTop) {
+
+						this.increment = this.increment + speed;
+
+						// parameters for obtaining random numbers
+						this.minLeft = parseInt(this.minLeft - posLeft);
+						this.minTop = parseInt(this.minTop - posTop);
+
+						this.maxLeft = parseInt(this.maxLeft - posLeft);
+						this.maxTop = parseInt(this.maxTop - posTop);
+
+						// interval
+						if (this.increment >= 10) {
+
+								var leftSpace = Math.floor(Math.random() * (this.maxLeft - this.minLeft + 1)) + this.minLeft;
+
+								var topSpace = Math.floor(Math.random() * (this.maxTop - this.minTop + 1)) + this.minTop;
+
+								this.increment = 0;
+
+								return {
+										leftSpace: leftSpace,
+										topSpace: topSpace
+								};
+						}
+
+						return null;
+				}
 
 				/********************************
     * create ship
-    */
-
-				/********************************
-    * movement space (canvas)
     */
 
 				// set size canvas
@@ -339,58 +435,30 @@ var FinallClass = function () {
 						this.canvas.width = _width;
 
 						this.canvas.height = _height;
-
-						this.canvas.style.border = '1px solid #333';
 				}
 
-				// draw elems
+				/********************************
+    * movement space (canvas)
+    */
 
 		}, {
-				key: 'drawElement',
-				value: function drawElement(intensitLeft, intensitTop) {
+				key: 'movementSpace',
+				value: function movementSpace(_left, _top) {
 
-						var objStars = {};
+						// this
+						var _this = this;
 
-						// get coordinates
-						var coords = this.getRandomStr(0.1, 1, 100);
+						this.posCanvasLeft = parseInt(this.posCanvasLeft + _left);
 
-						if (coords !== null) {
-
-								console.log(coords);
-								//objStars.star+[this.numberStar] = new DrawSpaceElements( this.ctx, coords.leftSpace, coords.topSpace );
-						}
-
-						return objStars;
-				}
-		}, {
-				key: 'drawElems',
-				value: function drawElems(intensitLeft, intensitTop) {
+						this.posCanvasTop = parseInt(this.posCanvasTop + _top);
 
 						// clear the context
 						this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-						this.drawElement(intensitLeft, intensitTop);
-				}
-		}, {
-				key: 'getRandomStr',
-				value: function getRandomStr(speed, min, max) {
+						eachObjProps(this.objStars, function () {
 
-						this.increment = this.increment + speed;
-
-						if (this.increment >= 10) {
-
-								var leftSpace = Math.floor(Math.random() * (max - min + 1)) + min;
-								var topSpace = Math.floor(Math.random() * (max - min + 1)) + min;
-
-								this.increment = 0;
-
-								return {
-										leftSpace: leftSpace,
-										topSpace: topSpace
-								};
-						}
-
-						return null;
+								new DrawSpaceElements(_this.ctx, this.leftSpace + _this.posCanvasLeft, this.topSpace + _this.posCanvasTop);
+						});
 				}
 		}]);
 
@@ -406,7 +474,7 @@ var reqAnimationFrame = function () {
 		setTimeout(callback, 1000 / 60);
 	};
 
-	// return function( callback ){ setTimeout( callback, 1000 ); };
+	//return function( callback ){ setTimeout( callback, 500 ); };
 }();
 
 /*
@@ -416,7 +484,7 @@ var reqAnimationFrame = function () {
 * 2 - wheel
 * 3 - wheel wrap
 */
-var newInstance = new FinallClass('SpaceShip', 'wheel', 'wheelWrap');
+var newInstance = new FinallClass('SpaceShip', 'wheel', 'wheelWrap', 500, 350);
 
 // init management
 var instanceManegement = newInstance.managementWheel();
@@ -426,10 +494,13 @@ function run() {
 
 	// return speed movement canvas
 	var speed = instanceManegement.speedCanvasMovement();
-	// console.log( speed );
+	//console.log( speed );
 
 	// basic position the canvas
-	newInstance.drawElems(speed.speedLeft, speed.speedTop);
+	newInstance.setObjStars(speed.speedLeft, speed.speedTop);
+
+	// movement space
+	newInstance.movementSpace(speed.speedLeft, speed.speedTop);
 
 	reqAnimationFrame(run);
 }

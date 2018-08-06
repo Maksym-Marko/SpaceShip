@@ -12,7 +12,7 @@ let reqAnimationFrame = ( function(){
 
         };
 
-	// return function( callback ){ setTimeout( callback, 1000 ); };
+	//return function( callback ){ setTimeout( callback, 500 ); };
 
 } )();
 
@@ -23,7 +23,7 @@ let reqAnimationFrame = ( function(){
 * 2 - wheel
 * 3 - wheel wrap
 */ 
-let newInstance 		= new FinallClass( 'SpaceShip', 'wheel', 'wheelWrap' );
+let newInstance 		= new FinallClass( 'SpaceShip', 'wheel', 'wheelWrap', 500, 350 );
 
 // init management
 let instanceManegement 	= newInstance.managementWheel();
@@ -33,10 +33,13 @@ function run(){
 
 	// return speed movement canvas
 	let speed 			= instanceManegement.speedCanvasMovement();
-	// console.log( speed );
+	//console.log( speed );
 
 	// basic position the canvas
-	newInstance.drawElems( speed.speedLeft, speed.speedTop );
+	newInstance.setObjStars( speed.speedLeft, speed.speedTop );
+
+	// movement space
+	newInstance.movementSpace( speed.speedLeft, speed.speedTop );
 
 	reqAnimationFrame( run );
 

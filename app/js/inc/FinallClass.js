@@ -3,24 +3,29 @@ class FinallClass{
 	/********************************
 	* constructor
 	*/
-	constructor( idCanvas, wheel, wheelWrap ){		
+	constructor( idCanvas, wheel, wheelWrap, widthCanvas, heightCanvas ){
 
-		// get canvas obj
-		this.canvas 	= document.getElementById( idCanvas );
-
-		// set context
-		this.ctx 		= this.canvas.getContext( '2d' );
+		// canvas element
+		this.idCanvas 		= idCanvas;
 
 		// wheel
-		this.wheel 		= wheel;
+		this.wheel 			= wheel;
 
 		// wheel wrap
-		this.wheelWrap = wheelWrap;
+		this.wheelWrap 		= wheelWrap;
 
-		// set size canvas
-		this.setSizeCanvas( 500, 350 );
+		// canvas size
+		this.widthCanvas 	= widthCanvas;
+		this.heightCanvas 	= heightCanvas;
 
+		// declare variables
 		this.declareVariables();
+
+		/*
+		* runs functions
+		*/
+		// set size canvas
+		this.setSizeCanvas( this.widthCanvas, this.heightCanvas );		
 
 	}
 
@@ -30,16 +35,31 @@ class FinallClass{
 	*/
 	declareVariables(){
 
-		// todo
-		this.posElLeft = 1;
+		// get canvas obj
+		this.canvas 		= document.getElementById( this.idCanvas );
 
-		this.posElTop = 1;
+		// set context
+		this.ctx 			= this.canvas.getContext( '2d' );
 
-		// 
-		this.increment = 0;
+		// use to the function getRandomStr()
+		this.increment 		= 0;
+		this.minLeft 		= 0;
+		this.minTop 		= 0;
+		this.maxLeft 		= this.widthCanvas;
+		this.maxTop 		= this.heightCanvas;
 
-		//
-		this.numberStar = 0;
+		// star store
+		this.objStars 		= {};
+
+		// first star
+		this.firstStar 		= 0;
+
+		// number of stars
+		this.countStars 	= 10;
+
+		// position of canvas
+		this.posCanvasLeft 	= 0;
+		this.posCanvasTop 	= 0;
 
 	}
 
@@ -55,62 +75,56 @@ class FinallClass{
 	/********************************
 	* create stars
 	*/
+	// record a point in an object
+	setObjStars( posLeft, posTop ){
 
-	/********************************
-	* create ship
-	*/
-
-	/********************************
-	* movement space (canvas)
-	*/
-
-	// set size canvas
-	setSizeCanvas( _width, _height ){
-
-		this.canvas.width = _width;
-
-		this.canvas.height = _height;
-
-		this.canvas.style.border = '1px solid #333';
-
-	}
-
-	// draw elems
-	drawElement( intensitLeft, intensitTop ){
-
-		let objStars = {};
-
-		// get coordinates
-		let coords = this.getRandomStr( 0.1, 1, 100 );
-
+		// get star coordinates
+		let coords = this.getRandomStr( 0.1, posLeft, posTop );		
+		
 		if( coords !== null ) {
 
-			console.log( coords );
-			//objStars.star+[this.numberStar] = new DrawSpaceElements( this.ctx, coords.leftSpace, coords.topSpace );
+			// add star			
+			let star = 'star' + this.firstStar;
+
+			this.objStars[star] = {
+				leftSpace: coords.leftSpace,
+				topSpace: coords.topSpace
+			}
+
+			this.firstStar += 1;
+
+			// delete star
+			let objStarsLength = Object.keys( this.objStars ).length;
+
+			let numberOfDelStar = 'star' + ( this.firstStar - this.countStars );
+
+			if( objStarsLength >= this.countStars ){
+
+				delete this.objStars[numberOfDelStar];
+			}
 
 		}
 
-		return objStars;	
-
 	}
 
-	drawElems( intensitLeft, intensitTop ){
-
-		// clear the context
-		this.ctx.clearRect( 0, 0, this.canvas.width, this.canvas.height );
-		
-		this.drawElement( intensitLeft, intensitTop );
-
-	}
-
-	getRandomStr( speed, min, max ) {		
+	// function to create a star with a random position
+	getRandomStr( speed, posLeft, posTop ) {		
 
 		this.increment = this.increment + speed;
 
+		// parameters for obtaining random numbers
+		this.minLeft 	= parseInt( this.minLeft - posLeft );
+		this.minTop 	= parseInt( this.minTop - posTop );
+
+		this.maxLeft 	= parseInt( this.maxLeft - posLeft );
+		this.maxTop 	= parseInt( this.maxTop - posTop );
+
+		// interval
 		if( this.increment >= 10 ){
 
-			let leftSpace = Math.floor(Math.random() * (max - min + 1)) + min;
-			let topSpace = Math.floor(Math.random() * (max - min + 1)) + min;
+			let leftSpace = Math.floor( Math.random() * ( this.maxLeft - this.minLeft + 1 ) ) + this.minLeft;
+
+			let topSpace = Math.floor( Math.random() * ( this.maxTop - this.minTop + 1 ) ) + this.minTop;
 
 			this.increment = 0;
 
@@ -123,6 +137,42 @@ class FinallClass{
 
 		return null;
 		
-	} 
+	}
+
+	/********************************
+	* create ship
+	*/	
+
+	// set size canvas
+	setSizeCanvas( _width, _height ){
+
+		this.canvas.width 		= _width;
+
+		this.canvas.height 		= _height;
+
+	}
+	
+	/********************************
+	* movement space (canvas)
+	*/
+	movementSpace( _left, _top  ){
+
+		// this
+		let _this = this;
+
+		this.posCanvasLeft = parseInt( this.posCanvasLeft + _left );
+
+		this.posCanvasTop = parseInt( this.posCanvasTop + _top );
+
+		// clear the context
+		this.ctx.clearRect( 0, 0, this.canvas.width, this.canvas.height );
+
+		eachObjProps( this.objStars, function(){
+
+			new DrawSpaceElements( _this.ctx, this.leftSpace + _this.posCanvasLeft, this.topSpace + _this.posCanvasTop );
+
+		} );		
+
+	}
 
 }

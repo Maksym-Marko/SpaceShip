@@ -21,6 +21,7 @@ gulp.task( 'compress', () => {
 // compile
 gulp.task('goBabel', () =>
     gulp.src( [
+    		'app/js/inc/helpers.js',
     		'app/js/inc/Management.js',
     		'app/js/inc/DrawElementInCanvas.js',
     		'app/js/inc/FinallClass.js',
