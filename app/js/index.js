@@ -33,10 +33,9 @@ function run(){
 
 	// return speed movement canvas
 	let speed 			= instanceManegement.speedCanvasMovement();
-	//console.log( speed );
 
-	// basic position the canvas
-	newInstance.setObjStars( speed.speedLeft, speed.speedTop );
+	// clean canvas rect
+	newInstance.cleanCanvas();
 
 	// movement space
 	newInstance.movementSpace( speed.speedLeft, speed.speedTop );

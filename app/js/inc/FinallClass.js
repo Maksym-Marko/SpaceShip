@@ -29,6 +29,15 @@ class FinallClass{
 
 	}
 
+	// set size canvas
+	setSizeCanvas( _width, _height ){
+
+		this.canvas.width 		= _width;
+
+		this.canvas.height 		= _height;
+
+	}
+
 	/********************************
 	* declare a variables
 	* save a data
@@ -39,17 +48,20 @@ class FinallClass{
 		this.canvas 		= document.getElementById( this.idCanvas );
 
 		// set context
-		this.ctx 			= this.canvas.getContext( '2d' );
+		this.ctx 			= this.canvas.getContext( '2d' );		
 
-		// use to the function getRandomStr()
+		// intensity of star creation
 		this.increment 		= 0;
-		this.minLeft 		= 0;
-		this.minTop 		= 0;
-		this.maxLeft 		= this.widthCanvas;
-		this.maxTop 		= this.heightCanvas;
+		this.intensity 		= 5;
 
 		// star store
 		this.objStars 		= {};
+
+		// coordinates of star
+		this.coordsStar 	= {};
+
+		// space between
+		this.spaceBetween 	= 40;
 
 		// first star
 		this.firstStar 		= 0;
@@ -57,9 +69,9 @@ class FinallClass{
 		// number of stars
 		this.countStars 	= 10;
 
-		// position of canvas
-		this.posCanvasLeft 	= 0;
-		this.posCanvasTop 	= 0;
+		// position of ship
+		this.posShipLeft 	= this.widthCanvas / 2;
+		this.posShipTop 	= this.heightCanvas / 2;
 
 	}
 
@@ -73,84 +85,41 @@ class FinallClass{
 	}
 
 	/********************************
-	* create stars
+	* create star obj
 	*/
 	// record a point in an object
 	setObjStars( posLeft, posTop ){
 
-		// get star coordinates
-		let coords = this.getRandomStr( 0.1, posLeft, posTop );		
-		
-		if( coords !== null ) {
-
-			// add star			
-			let star = 'star' + this.firstStar;
-
-			this.objStars[star] = {
-				leftSpace: coords.leftSpace,
-				topSpace: coords.topSpace
-			}
-
-			this.firstStar += 1;
-
-			// delete star
-			let objStarsLength = Object.keys( this.objStars ).length;
-
-			let numberOfDelStar = 'star' + ( this.firstStar - this.countStars );
-
-			if( objStarsLength >= this.countStars ){
-
-				delete this.objStars[numberOfDelStar];
-			}
-
-		}
-
-	}
-
-	// function to create a star with a random position
-	getRandomStr( speed, posLeft, posTop ) {		
-
-		this.increment = this.increment + speed;
-
-		// parameters for obtaining random numbers
-		this.minLeft 	= parseInt( this.minLeft - posLeft );
-		this.minTop 	= parseInt( this.minTop - posTop );
-
-		this.maxLeft 	= parseInt( this.maxLeft - posLeft );
-		this.maxTop 	= parseInt( this.maxTop - posTop );
+		// increase count
+		this.increment = this.increment + 0.1;
 
 		// interval
-		if( this.increment >= 10 ){
+		if( this.increment >= this.intensity ){
 
-			let leftSpace = Math.floor( Math.random() * ( this.maxLeft - this.minLeft + 1 ) ) + this.minLeft;
+			// set coords
+			this.coordsStar.leftSpace 	= getRandomStr( this.spaceBetween, this.widthCanvas - this.spaceBetween );
+			this.coordsStar.topSpace 	= getRandomStr( this.spaceBetween, this.heightCanvas - this.spaceBetween );
+			
+			let _createObjStar 			= DrawSpaceElements.createObjStar( this.coordsStar, this.firstStar, this.objStars, this.countStars );
 
-			let topSpace = Math.floor( Math.random() * ( this.maxTop - this.minTop + 1 ) ) + this.minTop;
-
-			this.increment = 0;
-
-			return {
-				leftSpace: leftSpace,
-				topSpace: topSpace
-			}		
+			// save data
+			this.firstStar 				= _createObjStar.firstStar;
+			this.objStars 				= _createObjStar.objStars;
+			this.increment 				= 0;
 
 		}
 
-		return null;
-		
-	}
+	}	
 
 	/********************************
 	* create ship
-	*/	
+	*/
+	createShip( biasLeft, biasTop ){		
 
-	// set size canvas
-	setSizeCanvas( _width, _height ){
-
-		this.canvas.width 		= _width;
-
-		this.canvas.height 		= _height;
+		return new DrawShip( this.ctx, this.posShipLeft, this.posShipTop, biasLeft, biasTop );
 
 	}
+	
 	
 	/********************************
 	* movement space (canvas)
@@ -160,18 +129,29 @@ class FinallClass{
 		// this
 		let _this = this;
 
-		this.posCanvasLeft = parseInt( this.posCanvasLeft + _left );
+		// create a star coordinate object
+		this.setObjStars( _left, _top );		
 
-		this.posCanvasTop = parseInt( this.posCanvasTop + _top );
-
-		// clear the context
-		this.ctx.clearRect( 0, 0, this.canvas.width, this.canvas.height );
-
+		// create stars
 		eachObjProps( this.objStars, function(){
 
-			new DrawSpaceElements( _this.ctx, this.leftSpace + _this.posCanvasLeft, this.topSpace + _this.posCanvasTop );
+			this.leftSpace 	= this.leftSpace + _left;
 
-		} );		
+			this.topSpace 	= this.topSpace + _top;
+
+			new DrawSpaceElements( _this.ctx, this.leftSpace, this.topSpace );
+
+		} );
+
+		// create ship
+		this.createShip( _left, _top );
+
+	}
+
+	// clean the canvas
+	cleanCanvas(){
+
+		this.ctx.clearRect( 0, 0, this.canvas.width, this.canvas.height );
 
 	}
 
